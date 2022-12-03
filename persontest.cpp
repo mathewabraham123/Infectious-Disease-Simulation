@@ -1,3 +1,5 @@
+// Mathew Abraham mga2267
+
 #include "infect_lib.hpp"
 #include <iostream>
 using std::cout;
