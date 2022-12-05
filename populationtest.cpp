@@ -19,9 +19,9 @@ int main() {
     cin >> proportion_vaccinated;
     Population population(pop_size);    
     cout << "Size of population = " << pop_size << '\n';
-    population.random_infection();
     population.set_probability_of_transfer(probability_of_transfer);
     population.vaccinate(proportion_vaccinated);
+    population.random_infection();
     int step = 1;
     for ( ; ; step++) {
 
