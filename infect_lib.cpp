@@ -106,37 +106,15 @@ void Population::update() {
     for (int i = 0; i < npeople_; i++) {
         if (population_[i].is_sick()) originally_sick_people.push_back(i);
     }
-    for (int i = 0; i < npeople_; i++) {
-        // if vaccinated or recovered, no need to simulate interactions
-        if (population_[i].is_vaccinated() || population_[i].is_stable()) continue;
-        // each person interacts with 6 random people
-        for (int j = 0; j < 6; j++) {
-            random_person = int_distribution(r);
-            if (!(real_distribution(r) <= probability_of_transfer_)) continue;
-            if (population_[i].is_sick() && population_[random_person].is_susceptible()) population_[random_person].infect(5);
-            else if (population_[random_person].is_sick() && population_[i].is_susceptible()) population_[i].infect(5);
-        }
-    }   
     for (int j = 0; j < originally_sick_people.size(); j++) {
+        for (int k = 0; k < 6; k++) {
+            random_person = int_distribution(r);
+            if (real_distribution(r) <= probability_of_transfer_) {
+                population_[random_person].infect(5);
+            }
+        }
         population_[originally_sick_people[j]].update();
     }
-    // vector<int> people_to_infect;
-    // // keep track of originally sick people
-    // for (int i = 0; i < npeople_; i++) {
-    //     // if vaccinated or recovered, no need to simulate interactions
-    //     if (population_[i].is_vaccinated() || population_[i].is_stable()) continue;
-    //     // each person interacts with 6 random people
-    //     for (int j = 0; j < 6; j++) {
-    //         random_person = random_int(npeople_-1);
-    //         if (!(random_fraction() <= probability_of_transfer_)) continue;
-    //         if (population_[i].is_sick() && population_[random_person].is_susceptible()) people_to_infect.push_back(random_person);
-    //         else if (population_[random_person].is_sick() && population_[i].is_susceptible()) people_to_infect.push_back(i);
-    //     }
-    //     if (population_[i].is_sick()) update();
-    // }   
-    // for (int j = 0; j < people_to_infect.size(); j++) {
-    //     population_[people_to_infect[j]].infect(5);
-    // }
 }
 
 
