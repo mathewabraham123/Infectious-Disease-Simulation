@@ -4,6 +4,7 @@
 #include <random>
 #include <iostream>
 using std::to_string;
+using std::cout;
 
 // ---------------------------
 // Person class implementation
@@ -83,31 +84,65 @@ int Population::count_infected() {
     return ninfected;
 }
 
-void Population::update() {
-    std::random_device r;
-    std::uniform_real_distribution<float> distribution(0.,1.);
-    vector<int> people_to_infect;
-    for (int i = 0; i < npeople_; i++) {
-        if (population_[i].is_susceptible()) {
-            if (!(distribution(r) <= probability_of_transfer_)) continue;
-            if (i==0) {
-                if (population_[i+1].is_sick()) people_to_infect.push_back(i);
-            }
-            else if (i == npeople_-1) {
-               if (population_[i-1].is_sick()) people_to_infect.push_back(i);
-            }
-            else if (population_[i-1].is_sick() || population_[i+1].is_sick()) people_to_infect.push_back(i);
-        }
-        else if (population_[i].is_sick()) population_[i].update();
-    }
-    for (int j = 0; j < people_to_infect.size(); j++) {
-            population_[people_to_infect[j]].infect(5);
-    }
+int Population::random_int(int max) {
+    static std::default_random_engine static_engine; 
+    std::uniform_int_distribution<> ints(0,max); 
+    return ints(static_engine);
 }
+
+double Population::random_fraction() {
+    static std::default_random_engine static_engine; 
+    std::uniform_real_distribution<> real_distribution(0.,1.);
+    return real_distribution(static_engine);
+}
+
+void Population::update() {
+    std::default_random_engine r;
+    std::uniform_real_distribution<float> real_distribution(0.,1.);
+    std::uniform_int_distribution<int> int_distribution(0,npeople_-1);
+    int random_person;
+    vector<int> originally_sick_people;
+    // keep track of originally sick people
+    for (int i = 0; i < npeople_; i++) {
+        if (population_[i].is_sick()) originally_sick_people.push_back(i);
+    }
+    for (int i = 0; i < npeople_; i++) {
+        // if vaccinated or recovered, no need to simulate interactions
+        if (population_[i].is_vaccinated() || population_[i].is_stable()) continue;
+        // each person interacts with 6 random people
+        for (int j = 0; j < 6; j++) {
+            random_person = int_distribution(r);
+            if (!(real_distribution(r) <= probability_of_transfer_)) continue;
+            if (population_[i].is_sick() && population_[random_person].is_susceptible()) population_[random_person].infect(5);
+            else if (population_[random_person].is_sick() && population_[i].is_susceptible()) population_[i].infect(5);
+        }
+    }   
+    for (int j = 0; j < originally_sick_people.size(); j++) {
+        population_[originally_sick_people[j]].update();
+    }
+    // vector<int> people_to_infect;
+    // // keep track of originally sick people
+    // for (int i = 0; i < npeople_; i++) {
+    //     // if vaccinated or recovered, no need to simulate interactions
+    //     if (population_[i].is_vaccinated() || population_[i].is_stable()) continue;
+    //     // each person interacts with 6 random people
+    //     for (int j = 0; j < 6; j++) {
+    //         random_person = random_int(npeople_-1);
+    //         if (!(random_fraction() <= probability_of_transfer_)) continue;
+    //         if (population_[i].is_sick() && population_[random_person].is_susceptible()) people_to_infect.push_back(random_person);
+    //         else if (population_[random_person].is_sick() && population_[i].is_susceptible()) people_to_infect.push_back(i);
+    //     }
+    //     if (population_[i].is_sick()) update();
+    // }   
+    // for (int j = 0; j < people_to_infect.size(); j++) {
+    //     population_[people_to_infect[j]].infect(5);
+    // }
+}
+
 
 void Population::print() {
     // if population size is large do not print
-    if (npeople_ > 20) return;
+    if (npeople_ > 50) return;
     for (int i = 0; i < npeople_; i++) {
         Person person = population_[i];
         if (person.is_susceptible()) std::cout << " ?";

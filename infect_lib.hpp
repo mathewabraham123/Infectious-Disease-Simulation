@@ -36,4 +36,6 @@ private:
     int npeople_;                                               // number of people in the population
     vector<Person> population_;                                 // vector of persons representing the population
     double probability_of_transfer_;                            // probability of disease transmission upon contact
+    int random_int(int max);                                    // return random integer between 0 and max
+    double random_fraction();                                   // return random fraction as a decimal
 };

@@ -18,17 +18,28 @@ int main() {
     cout << "Enter a number between 0 and 1 for the proportion of the population that is vaccinated:" << '\n';
     cin >> proportion_vaccinated;
     Population population(pop_size);    
-    cout << "Size of population = " << pop_size << '\n';
+    cout << '\n';
+    cout << "Size of population: " << pop_size << '\n';
     population.set_probability_of_transfer(probability_of_transfer);
     population.vaccinate(proportion_vaccinated);
     population.random_infection();
-    int step = 1;
-    for ( ; ; step++) {
-
-        cout << "In step " << setw(5) << step << " #sick: " << setw(5) << population.count_infected();
-        population.print();
-        cout << '\n';
-        if (population.count_infected() == 0) break;
+    int step = 0;
+    bool nobody_infected = false;
+    while (!(nobody_infected)) {
+        step++;
+        if (pop_size < 51) {
+            cout << "In step " << setw(5) << step << " #sick: " << setw(5) << population.count_infected();
+            population.print();
+            cout << '\n';
+        }        
+        if (population.count_infected() == 0) nobody_infected = true;
         population.update();
     }
+    cout << "Contacts per day: 6" << '\n';
+    cout << "Probability of transmission: " << probability_of_transfer << '\n';
+    cout << "Percentage of population vaccinated: " << proportion_vaccinated << '\n';
+    cout << "Total steps: " << step << '\n';
+    cout << '\n';
+    
+    return 0;
 }
