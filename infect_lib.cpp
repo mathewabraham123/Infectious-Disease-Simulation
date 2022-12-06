@@ -62,13 +62,23 @@ Population::Population(int npeople) {
     probability_of_transfer_ = 0;
 }
 
+int Population::random_int(int max) {
+    static std::default_random_engine static_engine; 
+    std::uniform_int_distribution<> ints(0,max); 
+    return ints(static_engine);
+}
+
+double Population::random_fraction() {
+    static std::default_random_engine static_engine; 
+    std::uniform_real_distribution<> real_distribution(0.,1.);
+    return real_distribution(static_engine);
+}
+
 void Population::random_infection() {
-    std::random_device r;
-    std::uniform_int_distribution<int> distribution(0,npeople_-1);
     bool infection_failed = true;
     int random_person;
     while (infection_failed) {
-        random_person = distribution(r);
+        random_person = random_int(npeople_-1);
         if (population_[random_person].is_vaccinated()) continue;
         population_[random_person].infect(5);
         infection_failed = false;
@@ -84,22 +94,7 @@ int Population::count_infected() {
     return ninfected;
 }
 
-int Population::random_int(int max) {
-    static std::default_random_engine static_engine; 
-    std::uniform_int_distribution<> ints(0,max); 
-    return ints(static_engine);
-}
-
-double Population::random_fraction() {
-    static std::default_random_engine static_engine; 
-    std::uniform_real_distribution<> real_distribution(0.,1.);
-    return real_distribution(static_engine);
-}
-
 void Population::update() {
-    std::default_random_engine r;
-    std::uniform_real_distribution<float> real_distribution(0.,1.);
-    std::uniform_int_distribution<int> int_distribution(0,npeople_-1);
     int random_person;
     vector<int> originally_sick_people;
     // keep track of originally sick people
@@ -108,8 +103,8 @@ void Population::update() {
     }
     for (int j = 0; j < originally_sick_people.size(); j++) {
         for (int k = 0; k < 6; k++) {
-            random_person = int_distribution(r);
-            if (real_distribution(r) <= probability_of_transfer_) {
+            random_person = random_int(npeople_-1);
+            if (random_fraction() <= probability_of_transfer_) {
                 population_[random_person].infect(5);
             }
         }
