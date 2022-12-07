@@ -14,11 +14,15 @@ public:
     void update();                                              // update transmission count and/or variant count
     void set_mutation_rate(int mutation_rate);                  // set mutation rate to a different number of transmissions
     int get_variant();                                          // get variant count
+    int get_transmissions();                                    // get transmissions count
+    bool can_mutate();                                          // check if virus can mutate
+    void set_mutate();                                          // permit the virus to mutate
 private:
     int infection_period_;                                      // number of days person is infected for
     int variant_;                                               // number representing variant
     int transmissions_;                                         // number of transmissions of the variant
     int mutation_rate_;                                         // number of transmissions required for mutation
+    bool can_mutate_;                                           // whether or not the virus can mutate
 };
 
 class Person
@@ -45,6 +49,7 @@ class Population
 {
 public:
     Population(int npeople, Virus virus);                       // constructor
+    Population(int npeople);                                    // constructor with no virus arg
     void random_infection();                                    // infect a random person
     int count_infected();                                       // return number of people infected
     void update();                                              // update all persons in population
@@ -53,6 +58,7 @@ public:
     void vaccinate(double proportion);                          // set a proportion of the population's states to vaccinated
     int count_affected();                                       // returns number of people ever infected
     Virus pop_virus;                                            // virus infecting the population
+    int get_npeople_vaccinated();                               // returns number of people vaccinated
 private:  
     int npeople_;                                               // number of people in the population
     vector<Person> population_;                                 // vector of persons representing the population
@@ -61,5 +67,6 @@ private:
     double random_fraction();                                   // return random fraction as a decimal
     int naffected_;                                             // number of people ever infected
     int ninfected_;                                             // number of people currently infected
+    int npeople_vaccinated_;                                    // number of people vaccinated in the population
 };
 
