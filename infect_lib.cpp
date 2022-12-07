@@ -6,9 +6,6 @@
 using std::to_string;
 using std::cout;
 
-// ---------------------------
-// Person class implementation
-// ---------------------------
 
 Person::Person() : state_(0) {};
 
@@ -52,14 +49,13 @@ void Person::vaccinate() {
     state_ = -2;
 }
 
-// -------------------------------
-// Population class implementation
-// -------------------------------
 
 Population::Population(int npeople) {
     npeople_ = npeople;
     population_.resize(npeople);
     probability_of_transfer_ = 0;
+    naffected_ = 0;
+    ninfected_ = 0;
 }
 
 int Population::random_int(int max) {
@@ -83,38 +79,37 @@ void Population::random_infection() {
         population_[random_person].infect(5);
         infection_failed = false;
     }
+    naffected_++;
+    ninfected_++;
 }
 
 int Population::count_infected() {
-    int ninfected = 0;
-    for (int i = 0; i < npeople_; i++) {
-        Person person = population_[i];
-        if (person.is_sick()) ninfected++;
-    }
-    return ninfected;
+    return ninfected_;
 }
 
 void Population::update() {
     int random_person;
     vector<int> originally_sick_people;
-    // keep track of originally sick people
     for (int i = 0; i < npeople_; i++) {
         if (population_[i].is_sick()) originally_sick_people.push_back(i);
     }
     for (int j = 0; j < originally_sick_people.size(); j++) {
         for (int k = 0; k < 6; k++) {
             random_person = random_int(npeople_-1);
-            if (random_fraction() <= probability_of_transfer_) {
-                population_[random_person].infect(5);
+            if (population_[random_person].is_susceptible()) {
+                if (random_fraction() <= probability_of_transfer_) {
+                    population_[random_person].infect(5);
+                    naffected_++;
+                    ninfected_++;
+                }
             }
         }
         population_[originally_sick_people[j]].update();
+        if (population_[originally_sick_people[j]].is_stable()) ninfected_--;
     }
 }
 
-
 void Population::print() {
-    // if population size is large do not print
     if (npeople_ > 50) return;
     for (int i = 0; i < npeople_; i++) {
         Person person = population_[i];
@@ -127,7 +122,6 @@ void Population::print() {
 }
 
 void Population::set_probability_of_transfer(double probability) {
-    // if probability is not between 0 and 1 exit
     if (probability < 0.0 || probability > 1.0) {
         std::cout << "[Error]: please enter a probability between 0 and 1" << '\n';
         exit(1);
@@ -136,7 +130,6 @@ void Population::set_probability_of_transfer(double probability) {
 }
 
 void Population::vaccinate(double proportion) {
-    // if proportion is not between 0 and 1 exit
     if (proportion < 0.0 || proportion > 1.0) {
         std::cout << "[Error]: please enter a proportion between 0 and 1" << '\n';
         exit(1);
@@ -152,4 +145,8 @@ void Population::vaccinate(double proportion) {
         population_[random_person].vaccinate();
         count++;
     }
+}
+
+int Population::count_affected() {
+    return naffected_;
 }

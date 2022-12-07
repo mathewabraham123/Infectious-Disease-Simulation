@@ -31,7 +31,7 @@ int main() {
             cout << "In step " << setw(5) << step << " #sick: " << setw(5) << population.count_infected();
             population.print();
             cout << '\n';
-        }        
+        }    
         if (population.count_infected() == 0) nobody_infected = true;
         population.update();
     }

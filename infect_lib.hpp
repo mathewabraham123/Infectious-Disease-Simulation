@@ -32,10 +32,13 @@ public:
     void print();                                               // print out population
     void set_probability_of_transfer(double probability);       // set probability of disease transmission upon contact
     void vaccinate(double proportion);                          // set a proportion of the population's states to vaccinated
+    int count_affected();                                       // returns number of people ever infected
 private:  
     int npeople_;                                               // number of people in the population
     vector<Person> population_;                                 // vector of persons representing the population
     double probability_of_transfer_;                            // probability of disease transmission upon contact
     int random_int(int max);                                    // return random integer between 0 and max
     double random_fraction();                                   // return random fraction as a decimal
+    int naffected_;                                             // number of people ever infected
+    int ninfected_;                                             // number of people currently infected
 };
