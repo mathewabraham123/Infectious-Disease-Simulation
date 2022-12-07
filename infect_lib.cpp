@@ -7,7 +7,7 @@ using std::to_string;
 using std::cout;
 
 
-Person::Person() : state_(0) {};
+Person::Person() : state_(0), recovered_variants_(0) {};
 
 string Person::status_string() {
     if (is_susceptible()) return "susceptible";
@@ -19,7 +19,10 @@ string Person::status_string() {
 void Person::update() {
     if (is_sick()) {
         state_--;
-        if (state_ == 0) state_--;
+        if (state_ == 0) {
+            state_--;
+            recovered_variants_++;
+        }
     }
 }
 
@@ -49,13 +52,24 @@ void Person::vaccinate() {
     state_ = -2;
 }
 
+bool Person::is_immune(int variant) {
+    return recovered_variants_ > variant;
+}
 
-Population::Population(int npeople) {
+void Person::infect(Virus &virus) {
+    int days = virus.get_infection_period();
+    infect(days);
+    virus.update();
+}
+
+
+Population::Population(int npeople, Virus virus) {
     npeople_ = npeople;
     population_.resize(npeople);
     probability_of_transfer_ = 0;
     naffected_ = 0;
     ninfected_ = 0;
+    pop_virus = virus;
 }
 
 int Population::random_int(int max) {
@@ -76,7 +90,7 @@ void Population::random_infection() {
     while (infection_failed) {
         random_person = random_int(npeople_-1);
         if (population_[random_person].is_vaccinated()) continue;
-        population_[random_person].infect(5);
+        population_[random_person].infect(pop_virus);
         infection_failed = false;
     }
     naffected_++;
@@ -96,11 +110,13 @@ void Population::update() {
     for (int j = 0; j < originally_sick_people.size(); j++) {
         for (int k = 0; k < 6; k++) {
             random_person = random_int(npeople_-1);
-            if (population_[random_person].is_susceptible()) {
-                if (random_fraction() <= probability_of_transfer_) {
-                    population_[random_person].infect(5);
-                    naffected_++;
-                    ninfected_++;
+            if (!(population_[random_person].is_vaccinated() || population_[random_person].is_sick())) {
+                if (!(population_[random_person].is_immune(pop_virus.get_variant()))) {
+                    if (random_fraction() <= probability_of_transfer_) {
+                        population_[random_person].infect(pop_virus);
+                        naffected_++;
+                        ninfected_++;
+                    }
                 }
             }
         }
@@ -149,4 +165,31 @@ void Population::vaccinate(double proportion) {
 
 int Population::count_affected() {
     return naffected_;
+}
+
+Virus::Virus() {
+    transmissions_ = 0;
+    variant_ = 0;
+    infection_period_ = 5;
+    mutation_rate_ = 500;
+}
+
+int Virus::get_infection_period() {
+    return infection_period_;
+}
+
+void Virus::update() {
+    transmissions_++;
+    if (transmissions_ >= mutation_rate_) {
+        transmissions_ = 0;
+        variant_++;
+    }
+}
+
+void Virus::set_mutation_rate(int mutation_rate) {
+    mutation_rate_ = mutation_rate;
+}
+
+int Virus::get_variant() {
+    return variant_;
 }
