@@ -36,8 +36,8 @@ public:
     bool is_immune(int variant);                                // check if person is immune to variant
     void infect(Virus &virus);                                  // infect person with virus information
 private:
-    int state_;                                                 // person's state represented by an integer
     int recovered_variants_;                                    // number of variants the person has recovered from
+    int state_;                                                 // person's state represented by an integer
 };
 
 

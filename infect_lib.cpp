@@ -27,9 +27,7 @@ void Person::update() {
 }
 
 void Person::infect(int n) {
-    if (is_susceptible()) {
-        state_ = n;
-    }
+    state_ = n;
 }
 
 bool Person::is_stable() {
