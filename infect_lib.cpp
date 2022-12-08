@@ -113,26 +113,28 @@ int Population::count_infected() {
 }
 
 void Population::update() {
-    int random_person;
+    int random_person, variant;
     vector<int> originally_sick_people;
     for (int i = 0; i < npeople_; i++) {
-        if (population_[i].is_sick()) originally_sick_people.push_back(i);
+        if (population_[i].is_sick()) 
+            originally_sick_people.push_back(i);
     }
     for (int j = 0; j < originally_sick_people.size(); j++) {
         for (int k = 0; k < 6; k++) {
             random_person = random_int(npeople_-1);
-            if (!(population_[random_person].is_vaccinated() || population_[random_person].is_sick())) {
-                if (!(population_[random_person].is_immune(pop_virus.get_variant()))) {
-                    if (random_fraction() <= probability_of_transfer_) {
-                        population_[random_person].infect(pop_virus);
-                        naffected_++;
-                        ninfected_++;
-                    }
-                }
+            variant = pop_virus.get_variant();
+            if (!( population_[random_person].is_vaccinated() 
+                || population_[random_person].is_sick() )
+                && !(population_[random_person].is_immune(variant))
+                && (random_fraction()<=probability_of_transfer_)) {
+                    population_[random_person].infect(pop_virus);
+                    naffected_++;
+                    ninfected_++;
             }
         }
         population_[originally_sick_people[j]].update();
-        if (population_[originally_sick_people[j]].is_stable()) ninfected_--;
+        if (population_[originally_sick_people[j]].is_stable()) 
+            ninfected_--;
     }
 }
 
