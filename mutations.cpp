@@ -1,3 +1,5 @@
+// Mathew Abraham mga2267
+
 #include "infect_lib.hpp"
 #include <iostream>
 #include <iomanip>
@@ -38,7 +40,6 @@ int main() {
             if (virus_mutated) break;
         }
         myFile << mutation_rate << " " << proportion_vaccinated << '\n';
-        cout << i << '\n';
     }
 
 

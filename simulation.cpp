@@ -19,7 +19,10 @@ int main() {
     cin >> proportion_vaccinated;
     Population population(pop_size);    
     cout << '\n';
-    cout << "Size of population: " << pop_size << '\n';
+    cout << "? = susceptibile" << '\n';
+    cout << "+ = sick" << '\n';
+    cout << "- = recovered" << '\n';
+    cout << "V = vaccinated" << '\n';
     population.set_probability_of_transfer(probability_of_transfer);
     population.vaccinate(proportion_vaccinated);
     population.random_infection();
@@ -35,6 +38,7 @@ int main() {
         if (population.count_infected() == 0) nobody_infected = true;
         population.update();
     }
+    cout << "Size of population: " << pop_size << '\n';
     cout << "Contacts per day: 6" << '\n';
     cout << "Probability of transmission: " << probability_of_transfer << '\n';
     cout << "Percentage of population vaccinated: " << proportion_vaccinated << '\n';

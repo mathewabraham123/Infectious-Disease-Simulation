@@ -12,7 +12,7 @@ using std::setw;
 int main() {
     int pop_size;
     double proportion_vaccinated;
-    pop_size = 1000;
+    pop_size = 10000;
     double probability_of_transfer = .2;
     int n_people_unvaccinated;
     ofstream myFile ("herdimmunity_data.out");
@@ -33,7 +33,6 @@ int main() {
             if (population.count_affected() < int(n_people_unvaccinated * .05)) break;
         }
         myFile << probability_of_transfer << " " << proportion_vaccinated << '\n';
-        cout << i << '\n';
     }
 
 

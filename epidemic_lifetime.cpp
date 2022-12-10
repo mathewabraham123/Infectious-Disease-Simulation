@@ -13,8 +13,7 @@ int main() {
     int pop_size;
     double proportion_vaccinated;
     double avg_steps;
-    pop_size = 100000; // population of a city like Austin, TX
-    // run simulations where transmission probability is .2
+    pop_size = 10000;
     double probability_of_transfer = .2;
     ofstream myFile1 ("vac_vs_steps1.out");
     for (int i = 0; i < 100; i+=1) {
@@ -37,8 +36,6 @@ int main() {
         }
         avg_steps = avg_steps / 5;
         myFile1 << proportion_vaccinated << " " << avg_steps << '\n';
-        // myFile1 << proportion_vaccinated << " " << step << '\n';
-        cout << i << '\n';
     }
 
     probability_of_transfer = .4;
@@ -63,10 +60,6 @@ int main() {
         }
         avg_steps = avg_steps / 5;
         myFile2 << proportion_vaccinated << " " << avg_steps << '\n';
-        // myFile2 << proportion_vaccinated << " " << step << '\n';
-
-        cout << i << '\n';
-
     }
     
     probability_of_transfer = .6;
@@ -91,9 +84,6 @@ int main() {
         }
         avg_steps = avg_steps / 5;
         myFile3 << proportion_vaccinated << " " << avg_steps << '\n';
-        // myFile3 << proportion_vaccinated << " " << step << '\n';
-
-        cout << i << '\n';
     }
 
     probability_of_transfer = .8;
@@ -118,8 +108,6 @@ int main() {
         }
         avg_steps = avg_steps / 5;
         myFile4 << proportion_vaccinated << " " << avg_steps << '\n';
-        // myFile4 << proportion_vaccinated << " " << step << '\n';
-        cout << i << '\n';
     }
 
 
